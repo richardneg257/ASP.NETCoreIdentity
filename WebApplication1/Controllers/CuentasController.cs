@@ -39,7 +39,7 @@ namespace WebApplication1.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                return BuildToken(model);
+                return BuildToken(model, new List<string>());
             }
             else
             {
@@ -53,7 +53,10 @@ namespace WebApplication1.Controllers
             var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: true, lockoutOnFailure: true);
             if (result.Succeeded)
             {
-                return BuildToken(userInfo);
+                var usuario = await _userManager.FindByEmailAsync(userInfo.Email);
+                var roles = await _userManager.GetRolesAsync(usuario);
+
+                return BuildToken(userInfo, roles);
             }
             else
             {
@@ -63,14 +66,19 @@ namespace WebApplication1.Controllers
         }
 
 
-        private UserToken BuildToken(UserInfo userInfo)
+        private UserToken BuildToken(UserInfo userInfo, IList<string> roles)
         {
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
                 new Claim("miValor", "Lo que yo quiera"),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            foreach(var rol in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, rol));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
