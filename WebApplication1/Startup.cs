@@ -33,6 +33,8 @@ namespace WebApplication1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDataProtection();
+
             services.AddCors(options => 
                 options.AddPolicy("PermitirUrlApiRequest", builder => 
                     builder.WithOrigins("http://apirequest.io").WithMethods("GET", "POST").WithHeaders("*")));
