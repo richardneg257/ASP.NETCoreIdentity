@@ -33,6 +33,8 @@ namespace WebApplication1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+
             services.AddDbContext<ApplicationDBContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
             services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -72,6 +74,8 @@ namespace WebApplication1
             app.UseRouting();
 
             app.UseAuthentication();
+
+            app.UseCors(builder => builder.WithOrigins("http://apirequest.io").WithMethods("GET", "POST").WithHeaders("*"));
 
             app.UseAuthorization();
 
