@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace WebApplication1.Controllers
@@ -48,9 +49,12 @@ namespace WebApplication1.Controllers
         [HttpGet("obtener")]
         public ActionResult<string> ObtenerCadenaEncriptada()
         {
+            var protectorLimitadoPorTiempo = _protector.ToTimeLimitedDataProtector();
+
             string textoPlano = "Richard Negron";
-            string textoCifrado = _protector.Protect(textoPlano);
-            string textoDesencriptado = _protector.Unprotect(textoCifrado);
+            string textoCifrado = protectorLimitadoPorTiempo.Protect(textoPlano, TimeSpan.FromSeconds(5));
+            Thread.Sleep(6000);
+            string textoDesencriptado = protectorLimitadoPorTiempo.Unprotect(textoCifrado);
 
             return Ok(new { textoPlano, textoCifrado, textoDesencriptado });
         }
