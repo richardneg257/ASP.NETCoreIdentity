@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,7 +49,24 @@ namespace WebApplication1
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApplication1", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "WebApplication1",
+                    Version = "v1",
+                    Description = "Esta es una descripción del Web API",
+                    TermsOfService = new Uri("https://www.udemy.com/user/felipegaviln"),
+                    License = new OpenApiLicense()
+                    {
+                        Name = "MIT",
+                        Url = new Uri("http://bfy.tw/4ngh")
+                    },
+                    Contact = new OpenApiContact()
+                    {
+                        Name = "Richard Negron",
+                        Email = "richard.negron.257@gmail.com",
+                        Url = new Uri("https://gavilan.blog")
+                    }
+                });
             });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
